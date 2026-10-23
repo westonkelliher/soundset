@@ -1,0 +1,102 @@
+{
+  "name": "demo",
+  "out": "out",
+  "variants": 4,
+  "sampleRate": 48000,
+  "ceiling": -1,
+  "palette": "demo project: toy materials, C major pentatonic, small warm room",
+  "categories": {
+    "ui": {
+      "loudness": -30,
+      "maxMs": 150,
+      "play": {
+        "pitch": 30,
+        "gain": 1,
+        "voices": 2,
+        "cooldown": 40
+      }
+    },
+    "feedback": {
+      "loudness": -24,
+      "maxMs": 400,
+      "play": {
+        "pitch": 25,
+        "gain": 1,
+        "voices": 3,
+        "cooldown": 30
+      }
+    },
+    "combat": {
+      "loudness": -20,
+      "maxMs": 600,
+      "play": {
+        "pitch": 40,
+        "gain": 1.5,
+        "voices": 4,
+        "cooldown": 25
+      }
+    },
+    "impact": {
+      "loudness": -17,
+      "maxMs": 700,
+      "play": {
+        "pitch": 50,
+        "gain": 1.5,
+        "voices": 4,
+        "cooldown": 25
+      }
+    },
+    "stinger": {
+      "loudness": -19,
+      "maxMs": 3000,
+      "play": {
+        "pitch": 0,
+        "gain": 0,
+        "voices": 1,
+        "cooldown": 500
+      }
+    }
+  },
+  "cues": {
+    "hit": {
+      "category": "impact",
+      "trigger": "a melee hit lands",
+      "brief": "punchy cartoon thump",
+      "reference": "reference_hit.json"
+    },
+    "coin": {
+      "category": "feedback",
+      "trigger": "gold gained",
+      "brief": "bright brass clink, rewarding",
+      "reference": null
+    }
+  },
+  "contexts": {
+    "double": {
+      "label": "two hits",
+      "events": [
+        [
+          "hit",
+          0
+        ],
+        [
+          "hit",
+          8
+        ]
+      ]
+    },
+    "gold": {
+      "label": "hit then coin",
+      "events": [
+        [
+          "hit",
+          0
+        ],
+        [
+          "coin",
+          200
+        ]
+      ]
+    }
+  }
+}

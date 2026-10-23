@@ -1,0 +1,5 @@
+{ "note": "cozy plink: two Karplus-Strong plucks (G4 + D5 fifth), soft pick",
+  "layers": [
+    { "type": "pluck", "freq": "G4", "decay": 0.6, "damping": 0.4, "bright": 0.5, "env": {"a": 0.5, "d": 600} },
+    { "type": "pluck", "freq": "D5", "decay": 0.5, "damping": 0.45, "bright": 0.5, "at": 40, "env": {"a": 0.5, "d": 500}, "gain": -3 } ],
+  "bus": { "reverb": {"decay": 0.5, "wet": -20} } }

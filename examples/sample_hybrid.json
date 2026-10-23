@@ -1,0 +1,4 @@
+{ "note": "hybrid card slap: Kenney card-place sample pitched up + synthetic felt thump underneath",
+  "layers": [
+    { "label": "card", "type": "sample", "src": "lib:kenney_casino-audio/Audio/card-place-1.ogg", "pitch": {"rand": [1, 3]}, "length": 180, "fadeOut": 40 },
+    { "label": "felt", "type": "osc", "wave": "sine", "freq": 180, "bend": [[0, 5], [40, 0]], "env": {"a": 1, "d": 70}, "gain": -9 } ] }

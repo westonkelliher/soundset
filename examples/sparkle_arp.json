@@ -1,0 +1,137 @@
+{
+ "note": "buff sparkle: rising C-major-pentatonic arpeggio of FM bells (ratio 4: bright but harmonic) (C6 E6 G6 C7), 55 ms apart",
+ "layers": [
+  {
+   "type": "fm",
+   "freq": "C6",
+   "mods": [
+    {
+     "ratio": 4,
+     "index": [
+      [
+       0,
+       1.6
+      ],
+      [
+       150,
+       0.15
+      ]
+     ]
+    }
+   ],
+   "env": {
+    "a": 1,
+    "d": 260
+   }
+  },
+  {
+   "type": "fm",
+   "freq": "E6",
+   "mods": [
+    {
+     "ratio": 4,
+     "index": [
+      [
+       0,
+       1.6
+      ],
+      [
+       150,
+       0.15
+      ]
+     ]
+    }
+   ],
+   "env": {
+    "a": 1,
+    "d": 260
+   },
+   "at": 55,
+   "gain": -1
+  },
+  {
+   "type": "fm",
+   "freq": "G6",
+   "mods": [
+    {
+     "ratio": 4,
+     "index": [
+      [
+       0,
+       1.6
+      ],
+      [
+       150,
+       0.15
+      ]
+     ]
+    }
+   ],
+   "env": {
+    "a": 1,
+    "d": 280
+   },
+   "at": 110,
+   "gain": -2
+  },
+  {
+   "type": "fm",
+   "freq": "C7",
+   "mods": [
+    {
+     "ratio": 4,
+     "index": [
+      [
+       0,
+       1.6
+      ],
+      [
+       150,
+       0.15
+      ]
+     ]
+    }
+   ],
+   "env": {
+    "a": 1,
+    "d": 380
+   },
+   "at": 165,
+   "gain": -3
+  },
+  {
+   "label": "glitter",
+   "type": "noise",
+   "color": "crackle",
+   "density": 900,
+   "env": {
+    "a": 20,
+    "d": 300
+   },
+   "filter": {
+    "type": "highpass",
+    "freq": 5000
+   },
+   "gain": -22
+  }
+ ],
+ "bus": {
+  "reverb": {
+   "decay": 0.7,
+   "wet": -16,
+   "predelay": 15
+  },
+  "delay": {
+   "time": 110,
+   "feedback": 0.25,
+   "wet": -22
+  },
+  "eq": [
+   {
+    "type": "highshelf",
+    "freq": 7000,
+    "gain": -6
+   }
+  ]
+ }
+}

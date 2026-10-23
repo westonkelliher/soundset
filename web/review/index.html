@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%94%8A%3C/text%3E%3C/svg%3E">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>soundset review</title>
+  <link rel="stylesheet" href="/theme.css">
+  <link rel="stylesheet" href="./review.css">
+</head>
+<body>
+  <header id="bar">
+    <div class="title"><span id="title">soundset</span> <button id="about-btn" class="icon" title="Why this review exists">ⓘ</button></div>
+    <div id="about" hidden></div>
+    <div id="progress" class="chip"></div>
+    <div class="spacer"></div>
+    <label class="toggle" title="Each play uses a different random variation (seed), like the game will (v)"><input type="checkbox" id="vary"> vary</label>
+    <label class="vol" title="Listening volume (doesn't change the sounds)">🔊 <input type="range" id="volume" min="0" max="1.5" step="0.01" value="0.8"></label>
+    <button id="help-btn" class="icon" title="Hotkeys (?)">?</button>
+    <button id="cancel" class="btn">Cancel</button>
+    <button id="partial" class="btn" disabled>Send</button>
+    <button id="final" class="btn primary" disabled title="Enabled once every cue has a selection, a rating or a comment">Finalize</button>
+  </header>
+  <div id="layout">
+    <nav id="side"></nav>
+    <main id="cards"></main>
+  </div>
+  <div id="help" class="overlay" hidden>
+    <div class="panel">
+      <h2>How this works</h2>
+      <p>Each cue has 3 candidates, loudness-matched so the louder one doesn't win by default.</p>
+      <ul>
+        <li><b>Select</b> a candidate to lock that cue: no more iterating, it gets baked into the game.</li>
+        <li>Otherwise 👍 / 👎 any of them and optionally comment: the next round brings 3 new candidates built from that.</li>
+        <li>A cue you don't touch stays as-is for next time.</li>
+        <li><b>Finalize</b> sends everything (needs every cue touched); <b>Send N</b> sends just the touched cues; <b>Cancel</b> sends nothing. Ratings are saved as you go.</li>
+      </ul>
+      <h2>Hotkeys</h2>
+      <table>
+        <tr><td><kbd>j</kbd> <kbd>k</kbd></td><td>next / previous cue</td></tr>
+        <tr><td><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd></td><td>play A / B / C (the last played is the "target")</td></tr>
+        <tr><td><kbd>space</kbd></td><td>replay target</td></tr>
+        <tr><td><kbd>0</kbd></td><td>play the current (old) sound</td></tr>
+        <tr><td><kbd>x</kbd></td><td>play target in context (in a game sequence)</td></tr>
+        <tr><td><kbd>=</kbd> / <kbd>-</kbd></td><td>👍 / 👎 target</td></tr>
+        <tr><td><kbd>s</kbd></td><td>select target</td></tr>
+        <tr><td><kbd>c</kbd> / <kbd>n</kbd></td><td>comment on target / note on the whole cue</td></tr>
+        <tr><td><kbd>v</kbd></td><td>toggle vary</td></tr>
+        <tr><td><kbd>esc</kbd></td><td>leave a text box</td></tr>
+      </table>
+      <button class="btn" id="help-close">Close</button>
+    </div>
+  </div>
+  <div id="done-overlay" class="overlay" hidden><div class="panel"><h2 id="done-msg">Sent.</h2><p>You can close this tab.</p></div></div>
+  <div id="toast" hidden></div>
+  <script type="module" src="./review.js"></script>
+</body>
+</html>

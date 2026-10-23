@@ -1,0 +1,2 @@
+{ "note": "sfxr-style square blip up a fourth",
+  "layers": [ { "type": "osc", "wave": "square", "freq": "B5", "bend": [[0,0],[60,0],[61,5,"lin"]], "env": {"a": 1, "h": 60, "d": 160}, "filter": {"type": "lowpass", "freq": 6000} } ] }

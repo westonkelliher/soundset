@@ -1,0 +1,4 @@
+{ "note": "soft wooden UI tick: tiny modal wood knock + filtered noise click, ~50 ms",
+  "layers": [
+    { "label": "knock", "type": "modal", "freq": "G5", "modes": "wood", "decay": 45, "hardness": 0.7, "env": {"a": 0.3, "d": 50} },
+    { "label": "click", "type": "noise", "color": "white", "env": {"a": 0.2, "d": 6}, "filter": {"type": "bandpass", "freq": 3500, "q": 1.5}, "gain": -10 } ] }

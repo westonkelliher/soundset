@@ -1,0 +1,11 @@
+{ "note": "victory stinger: plucky C-major pentatonic run (C5 D5 E5 G5) landing on a C6 bell chord",
+  "layers": [
+    { "type": "pluck", "freq": "C5", "decay": 0.4, "damping": 0.3, "env": {"a": 0.5, "d": 300} },
+    { "type": "pluck", "freq": "D5", "decay": 0.4, "damping": 0.3, "at": 110, "env": {"a": 0.5, "d": 300} },
+    { "type": "pluck", "freq": "E5", "decay": 0.4, "damping": 0.3, "at": 220, "env": {"a": 0.5, "d": 300} },
+    { "type": "pluck", "freq": "G5", "decay": 0.4, "damping": 0.3, "at": 330, "env": {"a": 0.5, "d": 300} },
+    { "type": "modal", "freq": "C6", "modes": "bar", "decay": 1200, "at": 440, "env": {"a": 0.5, "d": 1300} },
+    { "type": "modal", "freq": "E6", "modes": "bar", "decay": 1100, "at": 440, "env": {"a": 0.5, "d": 1200}, "gain": -4 },
+    { "type": "modal", "freq": "G6", "modes": "bar", "decay": 1000, "at": 440, "env": {"a": 0.5, "d": 1100}, "gain": -6 },
+    { "label": "warmth", "type": "osc", "wave": "triangle", "freq": "C4", "unison": {"voices": 3, "detune": 8, "spread": 0.6}, "at": 440, "env": {"a": 20, "d": 900}, "filter": {"type": "lowpass", "freq": 1500}, "gain": -10 } ],
+  "bus": { "comp": {"threshold": -16, "ratio": 3, "attack": 10, "release": 150}, "reverb": {"decay": 0.9, "wet": -16, "predelay": 15} } }

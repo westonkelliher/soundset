@@ -1,0 +1,13 @@
+{
+  "name": "soundset",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Human-in-the-loop game SFX design: synth patches -> 3 candidates per cue -> pick / rate / comment -> bake",
+  "bin": {
+    "soundset": "bin/soundset"
+  },
+  "dependencies": {
+    "playwright-core": "^1.64.1"
+  }
+}

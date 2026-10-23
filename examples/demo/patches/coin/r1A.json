@@ -1,0 +1,5 @@
+{ "note": "modal disc, two strikes (classic coin interval)",
+  "layers": [
+    { "type": "modal", "freq": "E6", "modes": "disc", "decay": 260, "hardness": 0.8, "env": {"a": 0.2, "d": 300} },
+    { "type": "modal", "freq": "A6", "modes": "disc", "decay": 320, "hardness": 0.8, "at": 70, "env": {"a": 0.2, "d": 360} } ],
+  "bus": { "reverb": {"decay": 0.5, "wet": -18} } }

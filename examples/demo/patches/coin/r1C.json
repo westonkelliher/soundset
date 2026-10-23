@@ -1,0 +1,2 @@
+{ "note": "sample: kenney handleCoins2, pitched up",
+  "layers": [ { "type": "sample", "src": "lib:kenney_rpg-audio/Audio/handleCoins2.ogg", "pitch": {"rand": [1, 4]} } ] }

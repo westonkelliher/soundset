@@ -1,0 +1,7 @@
+{ "note": "heavy table slam: sub drop + driven body with harmonics for laptops + wood crack + room",
+  "layers": [
+    { "label": "sub", "type": "osc", "wave": "sine", "freq": 48, "bend": [[0, 19], [90, 0]], "env": {"a": 0.5, "h": 30, "d": 260} },
+    { "label": "body", "type": "osc", "wave": "triangle", "freq": 110, "bend": [[0, 12], [60, 0]], "env": {"a": 0.5, "d": 160}, "drive": {"type": "asym", "amount": 14}, "filter": {"type": "lowpass", "freq": 1800}, "gain": -4 },
+    { "label": "crack", "type": "modal", "freq": 240, "modes": "wood", "decay": 70, "hardness": 0.9, "env": {"a": 0.2, "d": 80}, "gain": -3 },
+    { "label": "snap", "type": "noise", "color": "white", "env": {"a": 0.1, "d": 12}, "filter": {"type": "bandpass", "freq": 2500, "q": 0.8}, "gain": -8 } ],
+  "bus": { "comp": {"threshold": -14, "ratio": 4, "attack": 8, "release": 90, "makeup": 2}, "reverb": {"decay": 0.6, "wet": -17, "hp": 300} } }

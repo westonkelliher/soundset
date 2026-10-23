@@ -1,0 +1,6 @@
+{ "note": "brass coin: two modal 'disc' strikes a fourth apart (E6 -> A6), sparkle noise, small room",
+  "layers": [
+    { "label": "strike1", "type": "modal", "freq": "E6", "modes": "disc", "decay": 260, "hardness": 0.85, "beat": 3, "env": {"a": 0.2, "d": 280} },
+    { "label": "strike2", "type": "modal", "freq": "A6", "modes": "disc", "decay": 380, "hardness": 0.85, "beat": 3, "at": {"rand": [60, 80]}, "env": {"a": 0.2, "d": 400} },
+    { "label": "tick", "type": "noise", "color": "white", "env": {"a": 0.1, "d": 5}, "filter": {"type": "highpass", "freq": 6000}, "gain": -14 } ],
+  "bus": { "reverb": {"decay": 0.45, "wet": -20, "predelay": 8, "damping": 3500} } }

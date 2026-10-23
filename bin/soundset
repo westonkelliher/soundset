@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# soundset — see `soundset help`; agents: read ../CLAUDE.md first
+DIR="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
+[ -d "$DIR/node_modules" ] || (cd "$DIR" && npm install --silent >/dev/null 2>&1)
+exec node "$DIR/src/cli.js" "$@"

@@ -1,0 +1,49 @@
+/* theme.css — every color in soundset comes from here (review page, analysis sheets).
+   Tinted colors rotate with --hue-shift, set from the page URL's `hue` (the launching Claude session's /color). */
+:root {
+  --hue-shift: 0;
+  --bg: oklch(from #0e1116 l c calc(h + var(--hue-shift)));
+  --bar: oklch(from #151a21 l c calc(h + var(--hue-shift)));
+  --panel: oklch(from #131922 l c calc(h + var(--hue-shift)));
+  --panel-hi: oklch(from #19212c l c calc(h + var(--hue-shift)));
+  --border: oklch(from #232b36 l c calc(h + var(--hue-shift)));
+  --border-hi: oklch(from #3a4656 l c calc(h + var(--hue-shift)));
+  --text: #d8dee7;
+  --dim: #7d8a99;
+  --faint: #4a5563;
+  --accent: oklch(from #4fa3ff l c calc(h + var(--hue-shift)));
+  --accent-bg: oklch(from #1a4d8a l c calc(h + var(--hue-shift)));
+  --on-accent: #ffffff;
+  --good: #3fb96b;
+  --good-bg: #173d27;
+  --bad: #e5604f;
+  --bad-bg: #4a1f1a;
+  --warn: #d4a62a;
+  --select: #e6c14a;
+  --select-bg: #3d3416;
+  --input-bg: oklch(from #0b0e12 l c calc(h + var(--hue-shift)));
+  --button: oklch(from #1f2733 l c calc(h + var(--hue-shift)));
+  --button-hi: oklch(from #2a3442 l c calc(h + var(--hue-shift)));
+  --playhead: #ffffff;
+  --font: ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", "Fira Code", ui-monospace, Menlo, monospace;
+
+  /* waveform + analysis sheet */
+  --wave: oklch(from #4fa3ff l c calc(h + var(--hue-shift)));
+  --wave-dim: oklch(from #2a5584 l c calc(h + var(--hue-shift)));
+  --grid: #2b3440;
+  --grid-label: #8995a3;
+  /* spectrogram colormap (quiet -> loud) */
+  --spec-0: #0b0d12;
+  --spec-1: #2a1b5c;
+  --spec-2: #8a2a7a;
+  --spec-3: #e0653a;
+  --spec-4: #fbe36a;
+  /* band bars: sub low lowmid mid highmid high */
+  --band-0: #6b4bd8;
+  --band-1: #3d7be0;
+  --band-2: #2fb3b0;
+  --band-3: #59c25a;
+  --band-4: #e2b33b;
+  --band-5: #e2683b;
+}

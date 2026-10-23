@@ -1,0 +1,4 @@
+{ "note": "FM thwack, metallic edge",
+  "layers": [
+    { "type": "fm", "freq": 110, "mods": [{"ratio": 1.41, "index": [[0, 9], [60, 0.5]]}], "bend": [[0, 7], [40, 0]], "env": {"a": 0.5, "d": 180}, "drive": {"type": "tanh", "amount": 10} },
+    { "type": "noise", "color": "pink", "env": {"a": 0.5, "d": 40}, "filter": {"type": "bandpass", "freq": 1800, "q": 1.2}, "gain": -4 } ] }

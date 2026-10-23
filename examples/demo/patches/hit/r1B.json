@@ -1,0 +1,5 @@
+{ "note": "sampled punch + synthetic sub",
+  "layers": [
+    { "type": "sample", "src": "lib:kenney_impact-sounds/Audio/impactPunch_medium_000.ogg", "gain": 0 },
+    { "type": "osc", "freq": 60, "bend": [[0, 12], [60, 0]], "env": {"a": 1, "d": 140}, "gain": -6 } ],
+  "bus": { "reverb": {"decay": 0.35, "wet": -20} } }
