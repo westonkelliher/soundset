@@ -124,12 +124,14 @@ async function playContext(ci, ctxName, id) {
   id ??= target[cue.name] ?? cue.candidates[0].id;
   const btn = $(`#ctx-${cue.name}`);
   try {
-    const list = [];
+    const list = [], seen = {};
     for (const [name, at] of cx.events) {
+      // repeats of a cue get different variations, like the game's round-robin (identical copies would comb-filter)
+      const nth = (seen[name] = (seen[name] ?? -1) + 1);
       let ref, loud;
       if (name === cue.name) { ref = cue.candidates.find((x) => x.id === id).patch; loud = cue.loudness; }
       else { const si = S.standIns[name]; if (!si?.ref) continue; ref = si.ref; loud = si.loudness; }
-      const r = await render(ref, ref, loud, name === cue.name ? seedFor() : 0);
+      const r = await render(ref, ref, loud, name === cue.name ? (nth ? 1 + ((nth - 1) % Math.max(1, S.variantsPreview - 1)) : seedFor()) : nth);
       list.push({ buffer: r.buffer, at });
     }
     startBuffers(list, { btn });

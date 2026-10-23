@@ -6,6 +6,15 @@ import { LIB } from "./server.js";
 
 // all CC0 (https://kenney.nl/support): the zip URL carries a hash, so it is scraped from each asset page
 const KENNEY = ["impact-sounds", "interface-sounds", "ui-audio", "rpg-audio", "casino-audio", "digital-audio", "sci-fi-sounds", "music-jingles"];
+// sound-design words -> what Kenney's file names actually say
+const SYNONYMS = {
+  magic: ["spell", "laser", "zap", "phaser", "power", "chime", "sparkle", "force"], spell: ["magic", "laser", "zap", "power"],
+  whoosh: ["swish", "swing", "woosh", "swoosh", "draw", "knife", "blade"], swish: ["whoosh", "swing"], swing: ["whoosh", "swish"],
+  hit: ["impact", "punch", "hit"], punch: ["impact"], thud: ["impact", "drop", "heavy"], wood: ["wood", "plank", "door"],
+  metal: ["metal", "plate", "chain", "bell"], coin: ["coin", "chip"], card: ["card"], click: ["click", "switch", "select", "tick"],
+  ui: ["click", "select", "switch", "toggle", "confirm", "back", "error"], error: ["error", "back", "denied", "fail"],
+  explosion: ["explosion", "blast", "boom"], glass: ["glass", "chime", "bell"], jingle: ["jingle", "jingles"], cloth: ["cloth", "leather", "bag"],
+};
 const AUDIO = /\.(ogg|wav|mp3|flac)$/i;
 const indexPath = () => path.join(LIB, "index.json");
 
@@ -77,7 +86,8 @@ export async function lib(a) {
     if (!fs.existsSync(indexPath())) throw new Error("library is empty: run `soundset lib fetch`");
     const idx = JSON.parse(fs.readFileSync(indexPath(), "utf8"));
     const q = a._.slice(1).map((w) => w.toLowerCase());
-    const hits = idx.filter((e) => q.every((w) => e.tags.some((t) => t.startsWith(w)) || e.src.toLowerCase().includes(w)));
+    const alts = (w) => [w, ...(SYNONYMS[w] || [])];
+    const hits = idx.filter((e) => q.every((w) => alts(w).some((v) => e.tags.some((t) => t.startsWith(v)) || e.src.toLowerCase().includes(v))));
     // collapse numbered variations (_000.._004) into one line
     const groups = new Map();
     for (const e of hits) {
