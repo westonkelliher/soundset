@@ -10,7 +10,7 @@ Your ears are `soundset check` (numbers), `soundset look` (spectrogram + envelop
 4. `docs/game-audio.md`: what each sound is *for*: priority, palette, variation, repetition, card-game specifics.
 5. `docs/feedback.md`: how to turn 👍/👎 and comments into the next 3 (required for rounds ≥2).
 
-Also read the project's `soundset.json` `palette` and each cue's `trigger` and `brief`. They are the style bible.
+Also read the project's `soundset.json` (format: `docs/project-format.md`): its `palette` and each cue's `trigger` and `brief` are the style bible.
 
 ## Workflow (run inside a project dir, the one with `soundset.json`)
 1. `soundset status`: what each cue needs (`needs-candidates` / `ready` = awaiting review / `selected`).
@@ -24,7 +24,7 @@ Also read the project's `soundset.json` `palette` and each cue's `trigger` and `
    - Update `notes/<cue>.md`: per-axis beliefs, tabu regions, what each of A/B/C tests.
 3. `soundset check`: fix every ✗ and ⚠ (unknown keys are typos; limiter >3 dB means a spiky transient; durations over the category max).
 4. `soundset look <cue>`: Read the PNG. Compare each candidate to docs/mixing.md §12 targets, to each other (are they *audibly* different?), and to the reference (the old sound). Iterate before Weston hears anything.
-5. `soundset review --title "<what>" --about "<why, for Weston coming back later>"`. Run it **in the background**: it blocks until Weston finalizes, then prints `SELECTED` / `ITERATE` / `UNTOUCHED` / `REOPENED` per cue and records it in `state.json`. Act on that output and don't re-ask in chat.
+5. `soundset review --title "<what>" --about "<why, for Weston coming back later>"`. Run it **in the background**: it blocks until Weston finalizes, then prints `SELECTED` / `ITERATE` / `UNTOUCHED` / `REOPENED` per cue and records it in `state.json`. Act on that output and don't re-ask in chat. Weston can also select a candidate from an earlier round (under "previous rounds"), so never re-present an unchanged favorite just to make it selectable.
 6. Repeat 2–5 until every cue is selected, then `soundset bake` → `<out>/*.ogg` + `manifest.json` + `soundset-player.js`. Then do a gain-only in-game mix pass: change category or cue `loudness` in `soundset.json` and bake again.
 
 ## Rules
@@ -41,4 +41,4 @@ Also read the project's `soundset.json` `palette` and each cue's `trigger` and `
 - `web/review/`: the review page (vanilla JS). `web/headless/` + `src/headless.js`: the same engine in headless Chrome for check/look/render/bake. `web/sheet/draw.js`: waveform + spectrogram drawing.
 - `src/`: `cli.js`, `project.js` (config/rounds/state), `review.js` (session, draft, report), `bake.js`, `library.js`, `server.js`.
 - `player/soundset-player.js`: the in-game player (copied into the game by bake).
-- Colors: `web/theme.css` only. Test: `examples/demo/` is a 2-cue project (`soundset check` / `review` there).
+- Colors: `web/theme.css` only. `soundset doctor` checks setup. After changing the tool, run `npm test` (test/smoke.mjs): it runs the engine, CLI, review flows, bake and player end to end on a copy of `examples/demo/`.

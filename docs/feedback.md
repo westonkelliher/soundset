@@ -168,7 +168,7 @@ Defaults: **2 exploit + 1 explore** after round 1; drop to 3 exploit once a cand
 ```
 - One belief per axis with target range + confidence; each candidate tests ≥1 belief.
 - **Tabu list**: store rejected candidates' feature vectors (centroid, attack ms, decay ms, band energies, crest) and offending component. Reject any new candidate within a small distance of a tabu point on the offending component (e.g. centroid within ¼ oct and same waveform family) unless it's deliberately re-testing.
-- Re-present the unchanged champion (unlabeled, random slot) every 2–3 rounds as a hidden reference: if it now loses, preferences drifted or fatigue set in.
+- Re-present the unchanged champion (unlabeled, random slot) every 2–3 rounds as a hidden reference: if it now loses, preferences drifted or fatigue set in. (soundset lets Weston select any earlier round's candidate directly, so re-present only for this drift check, never to make it selectable.)
 
 ## 3. Candidate-set design
 
