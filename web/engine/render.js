@@ -231,6 +231,12 @@ async function buildLayer(ctx, L, dest, rng, assets) {
       ampPts.push([0, fi ? 0 : 1], [fi, 1], [lenMs - fo, 1], [lenMs, 0, "lin"]);
       durMs = lenMs;
     } else durMs = Math.min(durMs, lenMs);
+    if (L.length != null) {
+      // hard-limit the sample to `length` (with a fadeOut) even when an env is longer
+      const end = Math.round((startS + (lenMs / 1000) * rate) * buf.sampleRate);
+      const fo = Math.max(1, Math.round(((Math.min(L.fadeOut ?? 10, lenMs / 2) / 1000) * rate) * buf.sampleRate));
+      for (let i = Math.max(0, end - fo); i < data.length; i++) data[i] *= i >= end ? 0 : (end - i) / fo;
+    }
     const b = ctx.createBuffer(1, data.length, buf.sampleRate);
     b.copyToChannel(data, 0);
     const s = ctx.createBufferSource();
