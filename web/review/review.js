@@ -180,7 +180,9 @@ function historyBlock(ci, cue) {
       h("div", {}, `round ${r.round}`, r.cueNote ? h("span", { class: "comment" }, ` — cue note: “${r.cueNote}”`) : null),
       ...r.candidates.map((c) => {
         const btn = h("button", { class: "small-btn", title: "Play", onclick: () => playRef(c.patch, cue.loudness, btn) }, `▶ ${c.id}`);
-        return h("div", { class: "hrow" }, btn,
+        const key = `r${r.round}${c.id}`, d = dcue(cue.name);
+        const sel = h("button", { class: "small-btn hsel", "data-key": key, title: "Use this earlier candidate: lock the cue", onclick: () => { d.selected = d.selected === key ? null : key; save(); updateCard(ci); } }, "Select");
+        return h("div", { class: "hrow" }, btn, sel,
           h("span", {}, c.vote > 0 ? "👍" : c.vote < 0 ? "👎" : "·"),
           c.comment ? h("span", { class: "comment" }, `“${c.comment}”`) : null,
           h("span", { class: "note", title: c.note }, c.note));
@@ -226,6 +228,8 @@ function updateCard(ci) {
     sb.classList.toggle("on", d.selected === c.id);
     sb.textContent = d.selected === c.id ? "Selected ✓" : "Select";
   }
+  el.querySelectorAll(".hsel").forEach((b) => { const on = d.selected === b.dataset.key; b.classList.toggle("on", on); b.textContent = on ? "Selected ✓" : "Select"; });
+  if (d.selected && /^r\d/.test(d.selected)) el.querySelector(".history").open = true;
   refreshSide();
 }
 

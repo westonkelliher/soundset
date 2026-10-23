@@ -59,6 +59,8 @@ function biquad(x, [b0, b1, b2, a0, a1, a2]) {
 }
 
 function kWeight(x, sr) {
+  // exact BS.1770-4 coefficients at 48 kHz (what every render uses); RBJ approximations otherwise
+  if (sr === 48000) return biquad(biquad(x, [1.53512485958697, -2.69169618940638, 1.19839281085285, 1, -1.69065929318241, 0.73248077421585]), [1, -2, 1, 1, -1.99004745483398, 0.99007225036621]);
   let w0 = (2 * Math.PI * 1681.974450955533) / sr, A = Math.pow(10, 3.999843853973347 / 40), al = Math.sin(w0) / (2 * 0.7071752369554196), c = Math.cos(w0), sA = Math.sqrt(A);
   const shelf = [A * (A + 1 + (A - 1) * c + 2 * sA * al), -2 * A * (A - 1 + (A + 1) * c), A * (A + 1 + (A - 1) * c - 2 * sA * al),
     A + 1 - (A - 1) * c + 2 * sA * al, 2 * (A - 1 - (A + 1) * c), A + 1 - (A - 1) * c - 2 * sA * al];
@@ -68,13 +70,13 @@ function kWeight(x, sr) {
 }
 
 // block loudnesses (LUFS) of K-weighted mean square over `winS` windows every `hopS`
-function blocks(chs, sr, winS, hopS) {
+function blocks(chs, sr, winS, hopS, pad = true) {
   const kw = chs.map((c) => kWeight(c, sr));
   const win = Math.round(winS * sr), hop = Math.round(hopS * sr);
   const len = kw[0].length, out = [];
   const csum = kw.map((c) => { const s = new Float64Array(c.length + 1); for (let i = 0; i < c.length; i++) s[i + 1] = s[i] + c[i] * c[i]; return s; });
   // windows may hang off both ends (zero padded) so short sounds still get measured
-  for (let start = -win + hop; start < len; start += hop) {
+  for (let start = pad ? -win + hop : 0; pad ? start < len : start + win <= len; start += hop) {
     const a = Math.max(0, start), b = Math.min(len, start + win);
     let z = 0;
     for (const s of csum) z += (s[b] - s[a]) / win;
@@ -90,7 +92,10 @@ export function momentaryMax(chs, sr) {
 }
 
 export function integrated(chs, sr) {
-  const z = blocks(chs, sr, 0.4, 0.1).filter((v) => lufsOf(v) > -70);
+  // full 400 ms blocks only (BS.1770 gating); sounds shorter than one block fall back to the padded measure
+  let z = blocks(chs, sr, 0.4, 0.1, false);
+  if (!z.length) z = blocks(chs, sr, 0.4, 0.1);
+  z = z.filter((v) => lufsOf(v) > -70);
   if (!z.length) return -Infinity;
   const rel = lufsOf(z.reduce((a, b) => a + b, 0) / z.length) - 10;
   const g = z.filter((v) => lufsOf(v) > rel);

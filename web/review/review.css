@@ -74,6 +74,7 @@ select.small-btn { padding: 2px 4px; }
 .vote.on.downv { background: var(--bad-bg); border-color: var(--bad); filter: none; opacity: 1; }
 .select-btn { margin-left: auto; background: var(--button); border: 1px solid var(--border-hi); border-radius: 6px; padding: 3px 12px; font-weight: 600; }
 .select-btn:hover { border-color: var(--select); color: var(--select); }
+.hsel.on { background: var(--select); border-color: var(--select); color: var(--bg); }
 .select-btn.on { background: var(--select); border-color: var(--select); color: var(--bg); }
 textarea { width: 100%; resize: none; background: var(--input-bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font: 13px var(--font); min-height: 30px; overflow: hidden; }
 textarea:focus { outline: none; border-color: var(--accent); }

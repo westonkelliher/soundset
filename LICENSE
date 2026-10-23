@@ -1,0 +1,32 @@
+soundset
+Copyright (c) 2026 Weston Kelliher
+
+SOUNDS YOU MAKE ARE YOURS
+Audio you create with soundset (patches you write, and files it renders or bakes)
+belongs entirely to you. No license terms, credit requirement or other claim
+attaches to that output.
+
+THE CODE (MIT License, with an attribution requirement)
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+1. The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
+2. Projects that include or are derived from the Software must give clear
+   credit, e.g. "soundset by Weston Kelliher (github.com/westonkelliher/soundset)",
+   in their README, credits or documentation.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+The CC0 sample packs `soundset lib fetch` downloads (Kenney) are not part of
+this repository and carry their own CC0 dedication.

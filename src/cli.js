@@ -3,15 +3,19 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { Project, initProject, readJson, writeJson } from "./project.js";
+import { Project, initProject, readJson } from "./project.js";
 import { withHeadless } from "./headless.js";
 import { review } from "./review.js";
 import { bake } from "./bake.js";
 import { lib } from "./library.js";
+import { LIB } from "./server.js";
 
 const HELP = `soundset — human-in-the-loop game SFX design (agents: read CLAUDE.md + docs/ first)
 
-project (run inside a dir with soundset.json, or pass --dir):
+setup:
+  doctor                          check Chrome, ffmpeg, the sample library
+
+project (run inside a dir with soundset.json, or pass --dir; format: docs/project-format.md):
   init [dir]                      scaffold soundset.json, patches/, notes/
   status                          every cue: status, round, last feedback (what to do next)
   history <cue>                   all rounds of a cue: notes, votes, comments, selection
@@ -91,6 +95,26 @@ async function main() {
 
   switch (cmd) {
     case undefined: case "help": case "-h": case "--help": return console.log(HELP);
+
+    case "doctor": {
+      const has = (cmd, args = ["-version"]) => { try { execFileSync(cmd, args, { stdio: "ignore" }); return true; } catch { return false; } };
+      const major = Number(process.versions.node.split(".")[0]);
+      const rows = [
+        [major >= 20, `node ${process.versions.node}`, "need >= 20"],
+        [has("google-chrome", ["--version"]) || has("chromium", ["--version"]), "Chrome (renders + review page)", "install Google Chrome; `npx playwright install chromium` also works headless"],
+        [has("ffmpeg"), "ffmpeg (bake to .ogg)", "apt install ffmpeg"],
+        [has("ffprobe"), "ffprobe (library durations)", "comes with ffmpeg"],
+        [has("unzip", ["-v"]), "unzip (lib fetch)", "apt install unzip"],
+      ];
+      const idx = path.join(LIB, "index.json");
+      const n = fs.existsSync(idx) ? JSON.parse(fs.readFileSync(idx, "utf8")).length : 0;
+      rows.push([n > 0, `sample library: ${n} samples`, "run `soundset lib fetch`"]);
+      try { await withHeadless(null, (h) => h.render({ layers: [{ type: "osc", freq: 440, env: { d: 50 } }] }, {})); rows.push([true, "headless render", ""]); }
+      catch (e) { rows.push([false, "headless render", e.message.split("\n")[0]]); }
+      for (const [ok, what, fix] of rows) console.log(`${ok ? "✓" : "✗"} ${what}${ok ? "" : `  -> ${fix}`}`);
+      if (rows.some((r) => !r[0])) process.exitCode = 1;
+      return;
+    }
 
     case "init": { console.log("wrote", initProject(a._[0] ?? ".")); return; }
 

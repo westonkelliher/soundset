@@ -76,8 +76,11 @@ export function record(proj, session, draft, mode) {
     const fb = [...c.candidates.filter((x) => votes[x.id] || comments[x.id]).map((x) => `${x.id}${votes[x.id] > 0 ? " 👍" : votes[x.id] < 0 ? " 👎" : ""}${comments[x.id] ? ` "${comments[x.id]}"` : ""}`),
       ...(d.cueNote?.trim() ? [`cue note: "${d.cueNote.trim()}"`] : [])].join(" | ") || "no ratings";
     if (d.selected) {
-      s.selected = { round: c.round, id: d.selected, at: now };
-      lines.push(`SELECTED  ${c.name} r${c.round}${d.selected}${fb === "no ratings" ? "" : `   (${fb})`}`);
+      // "B" = this round's B; "r1C" = an earlier round's candidate
+      const m = /^r(\d+)([A-Z])$/.exec(d.selected);
+      const round = m ? Number(m[1]) : c.round, id = m ? m[2] : d.selected;
+      s.selected = { round, id, at: now };
+      lines.push(`SELECTED  ${c.name} r${round}${id}${m ? " (from an earlier round)" : ""}${fb === "no ratings" ? "" : `   (${fb})`}`);
     } else {
       lines.push(`ITERATE   ${c.name} r${c.round}: ${fb}`);
       next.push(c.name);
@@ -129,7 +132,9 @@ export async function review(proj, a) {
   const res = await done;
   clearInterval(timer);
   srv.close();
+  srv.server.closeAllConnections(); // the page's presence stream would otherwise keep the process alive
   if (res.mode === "cancel" || res.mode === "closed") {
+    if (res.draft) writeJson(draftPath, res.draft);
     console.log(`soundset review: ${res.mode === "closed" ? "CANCELLED (page closed)" : "CANCELLED"} — nothing recorded; ratings so far are kept as a draft for the next review.`);
     return;
   }
