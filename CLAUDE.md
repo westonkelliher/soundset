@@ -19,6 +19,7 @@ Also read the project's `soundset.json` (format: `docs/project-format.md`): its 
    - Write exactly 3 patches: `patches/<cue>/r<N>A.json`, `r<N>B.json`, `r<N>C.json` (N = last round + 1).
      - Round 1: three clearly different **directions** (e.g. synthetic / sample-led / hybrid, or dark-heavy / bright-snappy / tonal).
      - Later rounds: follow docs/feedback.md (≈2 exploit the liked ones per comments + 1 explore; vary ≤2 axes each; never re-propose a rejected region; randomize which slot holds what).
+     - **The 3 must always be meaningfully different to the ear, even when converging on a favorite**, unless Weston explicitly asks for near-copies. Polishing means 3 *distinct* takes on the favorite (e.g. a different material for the transient, half or double the length, an octave shift, an added or removed layer), not three tweaks to its tail. Tweaks of ≤3 dB or ≤20% are inaudible in an A/B. `soundset check` flags near-identical pairs, so fix them before review.
      - `note`: one plain-words line Weston will read ("wood knock + soft felt thump, short"). Don't put jargon dumps or self-praise in it.
      - Use `{"rand":…}` only for small natural variation (it becomes the baked round-robin), not to explore.
    - Update `notes/<cue>.md`: per-axis beliefs, tabu regions, what each of A/B/C tests.

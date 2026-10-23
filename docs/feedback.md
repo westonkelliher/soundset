@@ -173,6 +173,7 @@ Defaults: **2 exploit + 1 explore** after round 1; drop to 3 exploit once a cand
 ## 3. Candidate-set design
 
 - **Name the axis each candidate tests** (internally): e.g. A = "+crunch via drive", B = "+crunch via noise transient", C = "explore: tonal tail".
+- **Meaningful variance is mandatory in every round, including convergence rounds** (Weston, round 3: "these 3 sound the same… we always want some meaningful variance unless the user specifies they want three of the same thing with slight variation"). Converging = 3 distinct takes on the favorite, never 3 near-copies.
 - Differences must be clearly audible: ≥½–1 oct centroid, ≥2× attack/decay, ≥6 dB band change, ≥3 st pitch, or a different layer. Near-identical triplets waste a round and tire the listener.
 - Vary ≤2 axes per candidate after round 1 so votes are attributable.
 - **Loudness-match every candidate** to the cue target, within ±0.5 LU: louder is judged better, even with sub-1 dB differences listeners don't notice as loudness. For sounds <400 ms integrated LUFS is unreliable — match max momentary (400 ms) loudness or K-weighted RMS over the active part. True peak ≤ −1 dBTP.

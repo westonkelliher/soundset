@@ -61,6 +61,23 @@ function feedbackLine(c) {
     ...(c.cueNote ? [`cue note: "${c.cueNote}"`] : [])].join(" | ") || "no ratings";
 }
 
+// pairs of candidates whose measurable shape is nearly the same: Weston will hear them as one sound
+function similar(cands) {
+  const out = [];
+  for (let i = 0; i < cands.length; i++)
+    for (let j = i + 1; j < cands.length; j++) {
+      const a = cands[i].m, b = cands[j].m;
+      const oct = Math.abs(Math.log2((a.centroidHz || 1) / (b.centroidHz || 1)));
+      const dur = Math.abs(Math.log2((a.durMs || 1) / (b.durMs || 1)));
+      const band = Math.max(...Object.keys(a.bands).map((k) => Math.abs(a.bands[k] - b.bands[k])));
+      const crest = Math.abs(a.crestDb - b.crestDb), atk = Math.abs(a.attackMs - b.attackMs);
+      const st = a.pitch && b.pitch ? Math.abs(12 * Math.log2(a.pitch.hz / b.pitch.hz)) : 0;
+      if (oct < 0.3 && dur < 0.3 && band < 10 && crest < 3 && atk < 15 && st < 2)
+        out.push(`${cands[i].id} and ${cands[j].id} look near-identical (centroid Δ${oct.toFixed(2)} oct, length Δ${Math.round((2 ** dur - 1) * 100)}%, max band Δ${band.toFixed(0)}%): make them meaningfully different`);
+    }
+  return out;
+}
+
 function issues(proj, cue, m, info) {
   const out = [...(info.warnings || [])];
   const maxMs = proj?.cue(cue).maxMs ?? proj?.category(cue).maxMs;
@@ -165,14 +182,17 @@ async function main() {
       await withHeadless(proj.dir, async (h) => {
         for (const cue of cues) {
           const round = proj.latestRound(cue);
+          const seen = [];
           for (const id of proj.rounds(cue)[round] || []) {
             const rel = proj.patchRel(cue, round, id);
             try {
               const r = await h.render(rel, proj.renderOpts(cue));
+              seen.push({ id, m: r.metrics });
               const is = issues(proj, cue, r.metrics, r.info);
               console.log(`${is.length ? "⚠" : "✓"} ${pad(rel, 30)} ${fmtMetrics(r.metrics)}${is.map((x) => "\n    ⚠ " + x).join("")}`);
             } catch (e) { bad++; console.log(`✗ ${pad(rel, 30)} ${e.message}`); }
           }
+          for (const w of similar(seen)) console.log(`⚠ ${cue} r${round}: ${w}`);
           const n = (proj.rounds(cue)[round] || []).length;
           if (n !== 3) console.log(`⚠ ${cue} r${round} has ${n} candidates (the review expects 3)`);
         }
