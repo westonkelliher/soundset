@@ -109,12 +109,13 @@ export function initProject(dir) {
       stinger: { loudness: -19, maxMs: 3000, play: { pitch: 0, gain: 0, voices: 1, cooldown: 500 } },
     },
     cues: {
-      example: { category: "ui", trigger: "when it plays in the game", brief: "purpose, emotion, material, size, references", reference: null },
+      example: { category: "ui", trigger: "when it plays in the game, how often, what plays with it", brief: "job, emotion, material, size, length, must-not, references (docs/game-audio.md §14)", reference: null },
     },
     contexts: {},
   });
   for (const d of ["patches", "notes"]) fs.mkdirSync(path.join(dir, d), { recursive: true });
-  fs.writeFileSync(path.join(dir, ".gitignore"), ".soundset/\n");
+  const gi = path.join(dir, ".gitignore"), old = fs.existsSync(gi) ? fs.readFileSync(gi, "utf8") : "";
+  if (!/^\.soundset\/?$/m.test(old)) fs.writeFileSync(gi, old + (old && !old.endsWith("\n") ? "\n" : "") + ".soundset/\n");
   return f;
 }
 

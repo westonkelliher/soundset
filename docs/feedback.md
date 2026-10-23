@@ -14,7 +14,7 @@ Shorthand used below (map these to your analyzer's bands):
 
 Patch levers (exact keys: `docs/patch-format.md`): per layer `osc`/`fm`/`noise`/`pluck`/`modal`/`sample` with `bend` (pitch env), `filter` (+ cutoff `env`), `env` (amp), `drive`, `eq`, `unison`, `am`, `ring`; bus `comp`, `reverb`, `delay`, `drive`, `eq`; `rand`/`pick` for variants.
 
-Step sizes: "a bit/slightly" = 0.5× default step, "more/less X" = 1×, "way/much/still too" = 2×. Default steps: EQ band ±3 dB (Q≈1), filter cutoff ×/÷1.5 (≈0.6 oct), envelope times ×/÷1.6, pitch ±2 st, drive ±6 dB, reverb send ±6 dB, detune ±8 cents. Changes under ~1.5 dB in a band or <15% in a time constant are probably inaudible — don't spend a candidate on them.
+Step sizes: "a bit/slightly" = 0.5× default step, "more/less X" = 1×, "way/much/still too" = 2×. Default steps: EQ band ±3 dB (Q≈1), filter cutoff ×/÷1.5 (≈0.6 oct), envelope times ×/÷1.6, pitch ±2 st, drive ±6 dB, reverb send ±6 dB, detune ±8 cents. Changes under ~3 dB in a band or ~20% in a time are inaudible in a quick A/B of 3: don't spend a candidate on them (siblings must differ by §3's margins).
 
 ## 1. Descriptor lookup
 
@@ -113,9 +113,9 @@ Step sizes: "a bit/slightly" = 0.5× default step, "more/less X" = 1×, "way/muc
 | State after round | Candidate A | B | C |
 |---|---|---|---|
 | 1 up, others down, comment on up | up + comment at 1× step | up + comment at 2× step (or alt interpretation) | explore: new direction, or up × another axis |
-| 1 up, no comment | up + small mutation (±10–20% params) on axis 1 | up + small mutation on axis 2 | crossover/morph of up with best-down's liked part, or explore |
+| 1 up, no comment | up + clearly audible change (§3 margins) on axis 1 | up + clearly audible change on axis 2 | crossover/morph of up with best-down's liked part, or explore |
 | 2 up | crossover/morph (midpoint) | up1 + its comments | up2 + its comments |
-| all up, no select | they're close: one-axis variants of the best (OFAT) to find the deciding feature | — | — |
+| all up, no select | one-axis variants of the best (OFAT), each clearly audible, to find the deciding feature | — | — |
 | all down, comments | treat comments as gradient on the least-bad; move 2× | opposite of the shared complaint | new direction far from all tabu regions |
 | all down, no comments | revert to best-so-far from log + 1 change | 2 unexplored round-1 style directions | — |
 | 2+ rounds of all down | stop guessing: present 3 extreme archetypes along the most-likely axis (e.g. very dark / mid / very bright) to re-locate; ask for one comment |
@@ -123,7 +123,7 @@ Step sizes: "a bit/slightly" = 0.5× default step, "more/less X" = 1×, "way/muc
 Defaults: **2 exploit + 1 explore** after round 1; drop to 3 exploit once a candidate gets 👍 twice in a row; return to 1 explore if the score stops improving for 2 rounds.
 
 ### Mutation size
-- Start large, shrink: round 2 ≈ 25–35% of each parameter's range (or 1 octave cutoff / 6 dB / ×2 times); each round with a 👍 halve it; floor at audible-JND (~1.5 dB, ~15% time, ~1/4 oct).
+- Start large, shrink: round 2 ≈ 25–35% of each parameter's range (or 1 octave cutoff / 6 dB / ×2 times); each round with a 👍 halve it; floor at ~3 dB, ~25% time, ~½ oct: below that the 3 sound the same.
 - Mutate **few genes, by a lot** rather than all genes slightly (Dahlstedt: mutation probability × range control the degree of change). Mutate 1–3 parameters per candidate so you can attribute the vote.
 - Group parameters (transient / pitch / filter / envelope / FX) and evolve one group at a time once the direction is right; protects finished parts.
 - Keep dependent parameters coupled: FM modulator as integer ratio of carrier, filter cutoff relative to F0, envelope times relative to cue duration.
@@ -146,14 +146,14 @@ Defaults: **2 exploit + 1 explore** after round 1; drop to 3 exploit once a cand
 | `A 👍 "more crunch" \| B 👎 \| C 👎 "too 8-bit"` | A + drive 9 dB on 1–4 kHz band layer (parallel 40%); A + 20 ms noise burst LPF 6 kHz; A + both at 0.5×. Tabu: pulse/bitcrush (C) |
 | `"tail of B, attack of A"` | crossover (A transient + B tail, 20 ms crossfade); same with B's reverb send −3 dB; morph 0.3A/0.7B |
 | `A 👎 "muddy" \| B 👎 "thin" \| C 👎 "cheap"` | bracket BASS between A and B (−3 dB at 250 Hz vs A, +4 dB at 150 Hz vs B); C's fix: add layer + movement; one new direction |
-| `all 👍, no select` | best + shorter 30%; best + centroid ½ oct up; best + centroid ½ oct down |
+| `all 👍, no select` | best at ×0.6 length; best + centroid ½ oct up; best + centroid ½ oct down |
 | `B 👍 "more satisfying"` | B + pitch-drop body + click; B + rising tonal tail in key; B + 60 ms longer body + soft saturation |
 | `C 👎 "annoying"` (UI cue) | C −5 dB at 3 kHz + 40% shorter; C one octave lower, sine; new soft-attack (8 ms) direction |
 
 ### Fatigue and stopping
 - Signs: comments get shorter/vanish, blanket all-👍/all-👎, reversals of stable preferences, "fine"/"whatever".
 - Interactive evolution is fatigue-limited; 10–20 generations is the practical maximum (Takagi). For one SFX cue aim to converge in ≤5 rounds.
-- When fatigued: shrink differences, present the best-so-far + 2 polish variants so a Select is easy; suggest Select; defer cue to a later session.
+- When fatigued: suggest selecting the best so far (any earlier round is selectable), or present 2 distinct takes on it + 1 contrast; defer the cue to a later session.
 - Keep binary/coarse input (thumbs) — discrete coarse ratings reduce fatigue vs fine scales.
 
 ### Per-cue hypothesis log (keep in `notes/<cue>.md`; `state.json` is tool-managed)

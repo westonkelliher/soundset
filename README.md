@@ -11,24 +11,27 @@ Game sound effects designed by an AI agent and chosen by your ears. Each round, 
 
 ![what the agent sees](docs/look.png)
 
-## Use it
+## Install
 Needs Node ≥20, Google Chrome and ffmpeg.
 ```sh
 git clone https://github.com/westonkelliher/soundset && cd soundset && npm install
 ln -s "$PWD/bin/soundset" ~/.local/bin/soundset   # or anywhere on PATH
 soundset doctor && soundset lib fetch            # check setup; download CC0 Kenney packs (~600 samples)
-mkdir my-game-sfx && cd my-game-sfx && soundset init
+soundset demo                                    # try the review page on a throwaway 2-cue project
 ```
-Describe your cues in `soundset.json` ([format](docs/project-format.md)), then point your coding agent at [`CLAUDE.md`](CLAUDE.md). It runs the loop: write candidates → `check` → `look` → `review` (you rate) → repeat → `bake`. In your game: `const sfx = await createPlayer({base: "sfx/"}); sfx.play("impact")`.
 
-`soundset help` lists every command. On the review page, `?` lists hotkeys (1/2/3 play, `=`/`-` rate, `s` select, `j`/`k` move between cues). Try it on the bundled demo: `cd examples/demo && soundset review`.
+## Use it with your agent
+1. In your game's repo, tell your coding agent: *"Set up soundset for this game's sound effects. Read `<path to soundset>/CLAUDE.md`."* It finds the sound events in your code, drafts a cue list, briefs and a sonic palette, and asks you to confirm.
+2. Each round the agent writes and checks 3 candidates per cue (5–20 min), then the review page opens in Chrome. You listen and Select, or 👍/👎 and comment (about a minute per cue). `?` on the page explains everything.
+3. Repeat. Most cues settle in 2–4 rounds. The agent bakes selected sounds into the game (`const sfx = await createPlayer({base: "sfx/"}); sfx.play("impact")`); you play it and say what's too loud or quiet.
+
+`soundset help` lists every command; `soundset status` says what's next in a project. Project format: [docs/project-format.md](docs/project-format.md).
 
 ## Status
-It's in use (an auto-battler deckbuilder's 18 sounds, rounds 1–3). Not yet done:
+In use: an auto-battler deckbuilder's 18 cues, 15 selected after 3 rounds. Not yet done:
 - no live "tweak a knob" audition page; all changes go through rounds
 - peaks are sample peaks, not true-peak; the pitch readout is approximate on glides and chords
 - bakes `.ogg` only (older Safari needs another format)
-- `npm test` runs an end-to-end smoke test (engine, CLI, review flows, bake, player)
 
 ## License
 Sounds you make are entirely yours. The code is MIT with an attribution requirement: credit "soundset by Weston Kelliher". See [LICENSE](LICENSE).

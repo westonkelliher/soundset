@@ -97,7 +97,7 @@ export function record(proj, session, draft, mode) {
   proj.save();
   const head = `soundset review: ${mode === "final" ? "FINAL" : "PARTIAL"} — ${n} of ${session.cues.length} cue(s) reviewed`;
   const tail = [];
-  if (next.length) tail.push(`Next: write round N+1 (3 candidates each) for: ${next.join(", ")}.`, "  Follow CLAUDE.md \"Next round\": `soundset history <cue>`, docs/feedback.md, then check / look / review.");
+  if (next.length) tail.push(`Next: write round N+1 (3 candidates each) for: ${next.join(", ")}.`, "  Follow CLAUDE.md §2: `soundset history <cue>`, docs/feedback.md, then check / look / review.");
   const waiting = session.waiting.filter((w) => !next.includes(w));
   if (waiting.length) tail.push(`Also still waiting for candidates: ${waiting.join(", ")}.`);
   const sel = proj.cueNames.filter((c) => proj.status(c) === "selected");

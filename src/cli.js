@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 // cli.js — soundset command line. `soundset help` for usage.
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import { Project, initProject, readJson } from "./project.js";
 import { withHeadless } from "./headless.js";
@@ -10,10 +12,13 @@ import { bake } from "./bake.js";
 import { lib } from "./library.js";
 import { LIB } from "./server.js";
 
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+
 const HELP = `soundset — human-in-the-loop game SFX design (agents: read CLAUDE.md + docs/ first)
 
 setup:
   doctor                          check Chrome, ffmpeg, the sample library
+  demo                            try the review page on a throwaway copy of examples/demo
 
 project (run inside a dir with soundset.json, or pass --dir; format: docs/project-format.md):
   init [dir]                      scaffold soundset.json, patches/, notes/
@@ -21,7 +26,8 @@ project (run inside a dir with soundset.json, or pass --dir; format: docs/projec
   history <cue>                   all rounds of a cue: notes, votes, comments, selection
   look <cue> [--round N]          render a round's candidates + reference -> metrics + comparison PNG (Read it)
   check [cue...]                  render every unreviewed candidate; flag errors/warnings/out-of-range metrics
-  review [--title T] [--about A]  open the rating page in Chrome; BLOCKS until Weston finalizes; prints feedback
+  review [--title T] [--about A]  open the rating page in Chrome; BLOCKS until the human finishes; prints feedback
+                                  (agents: run it in the background)
   reopen <cue> [--note text]      un-select a cue so it gets new rounds
   bake [cue...]                   render selected cues x variants -> <out>/*.ogg + manifest.json
 
@@ -39,7 +45,8 @@ function args(argv) {
   const o = { _: [] };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a.startsWith("--")) { const k = a.slice(2); o[k] = argv[i + 1] && !argv[i + 1].startsWith("-") ? argv[++i] : true; }
+    // a following word or number (incl. negative: --loudness -24) is the value; another flag means boolean
+    if (a.startsWith("--")) { const k = a.slice(2), v = argv[i + 1]; o[k] = v != null && (!v.startsWith("-") || !isNaN(Number(v))) ? argv[++i] : true; }
     else if (a === "-o") o.o = argv[++i];
     else o._.push(a);
   }
@@ -61,7 +68,7 @@ function feedbackLine(c) {
     ...(c.cueNote ? [`cue note: "${c.cueNote}"`] : [])].join(" | ") || "no ratings";
 }
 
-// pairs of candidates whose measurable shape is nearly the same: Weston will hear them as one sound
+// pairs of candidates whose measurable shape is nearly the same: the human will hear them as one sound
 function similar(cands) {
   const out = [];
   for (let i = 0; i < cands.length; i++)
@@ -109,6 +116,11 @@ async function main() {
   const [cmd, ...rest] = process.argv.slice(2);
   const a = args(rest);
   const P = () => new Project(a.dir ?? process.cwd());
+  const cueArg = (proj) => {
+    if (!a._[0]) throw new Error(`usage: soundset ${cmd} <cue>   (cues: ${proj.cueNames.join(", ")})`);
+    proj.cue(a._[0]);
+    return a._[0];
+  };
 
   switch (cmd) {
     case undefined: case "help": case "-h": case "--help": return console.log(HELP);
@@ -133,7 +145,18 @@ async function main() {
       return;
     }
 
-    case "init": { console.log("wrote", initProject(a._[0] ?? ".")); return; }
+    case "init": {
+      const f = initProject(a._[0] ?? ".");
+      console.log(`wrote ${f}, patches/, notes/\nnext: describe the game's sounds in soundset.json (docs/project-format.md), or ask your coding agent to: it follows ${path.join(ROOT, "CLAUDE.md")} §1`);
+      return;
+    }
+
+    case "demo": {
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), "soundset-demo-"));
+      fs.cpSync(path.join(ROOT, "examples", "demo"), dir, { recursive: true });
+      console.error(`demo project copied to ${dir} (2 cues, round 1; nothing here touches the repo)`);
+      return review(new Project(dir), { title: "soundset demo", about: "A throwaway demo: rate or select the candidates to see what your agent would get back.", ...a });
+    }
 
     case "status": {
       const proj = P();
@@ -147,11 +170,19 @@ async function main() {
         console.log(`${pad(cue, 18)} ${pad(st, 17)} ${info}`);
       }
       console.log("\n" + Object.entries(counts).map(([k, v]) => `${v} ${k}`).join(", "));
+      const of = (st) => proj.cueNames.filter((c) => proj.status(c) === st);
+      const manifest = readJson(path.resolve(proj.dir, proj.config.out || "out", "manifest.json"), { cues: {} });
+      const unbaked = of("selected").filter((c) => { const s = proj.cueState(c).selected; return manifest.cues[c]?.patch !== proj.patchRel(c, s.round, s.id); });
+      const next = [];
+      if (of("needs-candidates").length) next.push(`write candidates for ${of("needs-candidates").join(", ")} (CLAUDE.md §2), check, look`);
+      if (of("ready").length) next.push(`\`soundset review\` (${of("ready").length} cue(s) awaiting the human)`);
+      if (unbaked.length) next.push(`\`soundset bake\` (${unbaked.length} selected cue(s) not baked yet)`);
+      console.log(next.length ? `next: ${next.join("; ")}` : "all selected and baked: mix pass in game (CLAUDE.md §4)");
       return;
     }
 
     case "history": {
-      const proj = P(), cue = a._[0];
+      const proj = P(), cue = cueArg(proj);
       const c = proj.cue(cue);
       console.log(`# ${cue} [${c.category}] loudness ${proj.loudness(cue)} LUFS-M\ntrigger: ${c.trigger}\nbrief: ${c.brief}`);
       if (fs.existsSync(proj.p("notes", `${cue}.md`))) console.log(`notes: notes/${cue}.md`);
@@ -164,7 +195,7 @@ async function main() {
     }
 
     case "look": {
-      const proj = P(), cue = a._[0];
+      const proj = P(), cue = cueArg(proj);
       const round = Number(a.round ?? proj.latestRound(cue));
       if (!round) throw new Error(`${cue} has no rounds yet`);
       const items = await lookItems(proj, cue, round);
@@ -178,6 +209,8 @@ async function main() {
     case "check": {
       const proj = P();
       const cues = a._.length ? a._ : proj.cueNames.filter((c) => proj.status(c) === "ready");
+      cues.forEach((c) => proj.cue(c));
+      if (!cues.length) return console.log("nothing to check: no cue has unreviewed candidates (`soundset status`)");
       let bad = 0;
       await withHeadless(proj.dir, async (h) => {
         for (const cue of cues) {
@@ -229,8 +262,7 @@ async function main() {
     case "review": return review(P(), a);
 
     case "reopen": {
-      const proj = P(), cue = a._[0];
-      proj.cue(cue);
+      const proj = P(), cue = cueArg(proj);
       const s = proj.cueState(cue);
       if (!s.selected) throw new Error(`${cue} is not selected`);
       s.reopened = [...(s.reopened || []), { ...s.selected, at: new Date().toISOString(), note: a.note || "" }];

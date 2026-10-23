@@ -28,13 +28,14 @@
   <div id="help" class="overlay" hidden>
     <div class="panel">
       <h2>How this works</h2>
-      <p>Each cue has 3 candidates, loudness-matched so the louder one doesn't win by default.</p>
+      <p>Your coding agent designed these sounds. Each cue has 3 candidates, loudness-matched so the louder one doesn't win by default. Listen, then for each cue either Select one or rate and comment. About a minute per cue.</p>
       <ul>
         <li><b>Select</b> a candidate to lock that cue: no more iterating, it gets baked into the game.</li>
-        <li>Otherwise 👍 / 👎 any of them and optionally comment: the next round brings 3 new candidates built from that.</li>
+        <li>Otherwise 👍 / 👎 any of them and comment in plain words (“too clicky”, “more like coins”, “C's attack with A's tail”): the next round brings 3 new candidates built from that. A cue you don't touch stays as-is.</li>
         <li>An earlier round's candidate can be selected too: open "previous rounds" under the card.</li>
-        <li>A cue you don't touch stays as-is for next time.</li>
         <li><b>Finalize</b> sends everything (needs every cue touched); <b>Send N</b> sends just the touched cues; <b>Cancel</b> sends nothing. Ratings are saved as you go.</li>
+        <li>After you send, your agent writes the next round (usually 5–20 minutes) and opens this page again. Selected sounds get baked into the game.</li>
+        <li><b>▶ current</b> plays the game's old sound; <b>▶ in context</b> plays the candidate inside a game moment; <b>vary</b> plays a different random variation each time, like the game will. A selected cue in the sidebar can be clicked to reopen it.</li>
       </ul>
       <h2>Hotkeys</h2>
       <table>
@@ -52,7 +53,7 @@
       <button class="btn" id="help-close">Close</button>
     </div>
   </div>
-  <div id="done-overlay" class="overlay" hidden><div class="panel"><h2 id="done-msg">Sent.</h2><p>You can close this tab.</p></div></div>
+  <div id="done-overlay" class="overlay" hidden><div class="panel"><h2 id="done-msg">Sent.</h2><p id="done-sub">You can close this tab.</p></div></div>
   <div id="toast" hidden></div>
   <script type="module" src="./review.js"></script>
 </body>

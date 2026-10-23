@@ -1,5 +1,5 @@
 // render.js — patch JSON -> normalized stereo Float32Arrays, via OfflineAudioContext.
-// The same code runs in the review page (what Weston hears) and headless Chrome (what gets baked).
+// The same code runs in the review page (what the human hears) and headless Chrome (what gets baked).
 // Patch format reference: docs/patch-format.md.
 import { resolve } from "./resolve.js";
 import { mulberry32, dbToGain, gainToDb, toHz } from "./util.js";

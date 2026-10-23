@@ -6,11 +6,13 @@ Units: time **ms**, frequency **Hz or note name** (`"C5"`, `"F#3"`, `"Eb4"`), le
 
 ```json
 {
-  "note": "what this candidate tries (shown to Weston under the waveform; keep it to one short line)",
+  "note": "what this candidate tries (shown to the human under the waveform; keep it to one short line)",
   "layers": [ { "type": "osc", ... }, ... ],
   "bus": { ... }
 }
 ```
+
+Optional metadata, ignored by the renderer: `name`, `tags`, `parent` (e.g. `"r2C"`), `axes` (what this candidate varies).
 
 ## Common layer keys (all types)
 | key | default | meaning |
@@ -72,7 +74,7 @@ The `//` comments below are annotations only. JSON has no comments, so leave the
 - `comp.attack` 5–15 ms lets the transient through (punch). 1 ms flattens it.
 
 ## Randomization (variants)
-Any number can be `{"rand":[min,max]}` (add `"int":true` to round) and any value can be `{"pick":[a,b,c]}`. **Seed 0** (what Weston reviews) uses the midpoint / first pick. Bake renders seeds 0…N−1 as the in-game variants, and noise, pluck, modal, unison and reverb also differ per seed. Keep ranges small: they are variations of *one* sound (pitch ±0.5–1 st, times ±15%, gain ±1.5 dB). Never use rand to "try options": that is what the 3 candidates are for.
+Any number can be `{"rand":[min,max]}` (add `"int":true` to round) and any value can be `{"pick":[a,b,c]}`. **Seed 0** (what the human reviews) uses the midpoint / first pick. Bake renders seeds 0…N−1 as the in-game variants, and noise, pluck, modal, unison and reverb also differ per seed. Keep ranges small: they are variations of *one* sound (pitch ±0.5–1 st, times ±15%, gain ±1.5 dB). Never use rand to "try options": that is what the 3 candidates are for.
 
 ## Translating docs/recipes.md shorthand
 | recipes.md | patch JSON |

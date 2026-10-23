@@ -1,4 +1,4 @@
-// headless.js — drives web/headless/ in headless Chrome (the same Blink audio engine Weston reviews in).
+// headless.js — drives web/headless/ in headless Chrome (the same Blink audio engine the review page uses).
 import { chromium } from "playwright-core";
 import { startServer } from "./server.js";
 

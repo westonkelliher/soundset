@@ -310,7 +310,8 @@ async function drawCard(ci) {
 async function finish(mode) {
   clearTimeout(saveT);
   await fetch("/api/finish", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mode, draft }) });
-  $("#done-msg").textContent = mode === "cancel" ? "Cancelled — nothing sent (your ratings are kept for next time)." : "Sent. The next round is on its way.";
+  $("#done-msg").textContent = mode === "cancel" ? "Cancelled — nothing sent (your ratings are kept for next time)." : "Sent.";
+  if (mode !== "cancel") $("#done-sub").textContent = "Your agent now writes the next round for anything you didn't select, and bakes what you did. You can close this tab.";
   $("#done-overlay").hidden = false;
 }
 

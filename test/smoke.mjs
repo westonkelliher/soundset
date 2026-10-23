@@ -31,12 +31,22 @@ ok(Math.abs(analyze([full], sr).lufsI - -3.0) < 0.3, "1 kHz full-scale sine ≈ 
 const ex = fs.readdirSync(path.join(ROOT, "examples")).filter((f) => f.endsWith(".json")).map((f) => path.join("examples", f));
 const out = run(["analyze", ...ex, "--png", path.join(os.tmpdir(), "soundset-smoke.png")], ROOT);
 ok(!out.includes("ERROR"), `${ex.length} examples render`);
+const wav = path.join(os.tmpdir(), "soundset-smoke.wav");
+ok(/^-30LUFS/m.test(run(["render", "examples/ui_tick.json", "-o", wav, "--loudness", "-30"], ROOT)), "cli: negative flag values (--loudness -30)");
+
+// init scaffolds without clobbering an existing .gitignore
+const fresh = fs.mkdtempSync(path.join(os.tmpdir(), "soundset-init-"));
+fs.writeFileSync(path.join(fresh, ".gitignore"), "node_modules\n");
+ok(run(["init"], fresh).includes("next:") && fs.readFileSync(path.join(fresh, ".gitignore"), "utf8") === "node_modules\n.soundset/\n", "init: scaffold + keeps .gitignore");
+ok(run(["check"], fresh).includes("nothing to check") && run(["status"], fresh).includes("next: write candidates for example"), "fresh project: check/status say what's next");
+fs.rmSync(fresh, { recursive: true, force: true });
 
 // 3. demo project loop, on a copy
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "soundset-smoke-"));
 fs.cpSync(path.join(ROOT, "examples", "demo"), tmp, { recursive: true });
 ok(run(["check"], tmp).split("\n").filter((l) => /^[✓⚠] patches/.test(l)).length === 6, "demo: check renders 6 candidates");
 ok(run(["look", "hit"], tmp).includes("sheet:"), "demo: look writes a sheet");
+ok(run(["status"], tmp).includes("next: `soundset review` (2 cue(s)"), "status: next step is review");
 
 async function reviewWith(drive) {
   const p = spawn(BIN, ["review", "--title", "smoke", "--about", "test"], { cwd: tmp, env: { ...process.env, NO_BROWSER: "1" } });
@@ -85,7 +95,19 @@ const bake = run(["bake"], tmp);
 const files = fs.readdirSync(path.join(tmp, "out"));
 ok(files.includes("manifest.json") && files.includes("soundset-player.js") && files.filter((f) => f.endsWith(".ogg")).length >= 1, `bake: ${files.length} files`);
 ok(bake.includes("hit") && bake.includes("r1B"), "bake: earlier-round selection baked");
+ok(run(["status"], tmp).includes("all selected and baked"), "status: nothing left after bake");
 ok(run(["reopen", "coin", "--note", "smoke"], tmp).includes("reopened") && run(["status"], tmp).includes("coin               needs-candidates"), "reopen: coin back to needs-candidates");
+
+// `soundset demo` serves a throwaway copy; cancel it over the API
+{
+  const p = spawn(BIN, ["demo"], { env: { ...process.env, NO_BROWSER: "1" } });
+  let stdout = "", err = "";
+  p.stdout.on("data", (d) => (stdout += d));
+  const url = await new Promise((res) => p.stderr.on("data", (d) => { err += d; const m = /http:\S+/.exec(err); if (m) res(m[0]); }));
+  await fetch(new URL("/api/finish", url), { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mode: "cancel" }) });
+  await new Promise((res) => p.on("exit", res));
+  ok(/CANCELLED/.test(stdout) && /soundset-demo-/.test(err), "demo: review on a temp copy");
+}
 
 // 4. the in-game player plays the baked files
 fs.writeFileSync(path.join(tmp, "out", "t.html"), `<script type="module">import {createPlayer} from "./soundset-player.js";
