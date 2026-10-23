@@ -28,7 +28,7 @@ soundset demo                                    # try the review page on a thro
 `soundset help` lists every command; `soundset status` says what's next in a project. Project format: [docs/project-format.md](docs/project-format.md).
 
 ## Status
-In use: an auto-battler deckbuilder's 18 cues, 15 selected after 3 rounds. Not yet done:
+In use: an auto-battler deckbuilder's 18 cues, all selected within 5 rounds (most in 2–3) and shipped. Not yet done:
 - no live "tweak a knob" audition page; all changes go through rounds
 - peaks are sample peaks, not true-peak; the pitch readout is approximate on glides and chords
 - bakes `.ogg` only (older Safari needs another format)
