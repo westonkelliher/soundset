@@ -49,7 +49,7 @@ function fmtMetrics(m) {
   const n = (q) => `${q.inharmonic ? "~" : ""}${q.note.name}${q.note.cents >= 0 ? "+" : ""}${q.note.cents}c`;
   const p = (m.pitch ? n(m.pitch) : "-") + (m.pitchEnd ? "→" + n(m.pitchEnd) : "");
   const b = m.bands;
-  return `dur ${m.durMs}ms atk ${m.attackMs}ms t20 ${m.t20Ms}ms crest ${m.crestDb}dB centroid ${m.centroidHz}Hz pitch ${p} flat ${m.flatness} | sub ${b.sub} low ${b.low} lmid ${b.lowmid} mid ${b.mid} hmid ${b.highmid} high ${b.high} %`;
+  return `${m.lufsM}LUFS dur ${m.durMs}ms atk ${m.attackMs}ms t20 ${m.t20Ms}ms crest ${m.crestDb}dB centroid ${m.centroidHz}Hz pitch ${p} flat ${m.flatness} | sub ${b.sub} low ${b.low} lmid ${b.lowmid} mid ${b.mid} hmid ${b.highmid} high ${b.high} %`;
 }
 
 function feedbackLine(c) {
@@ -60,7 +60,9 @@ function feedbackLine(c) {
 function issues(proj, cue, m, info) {
   const out = [...(info.warnings || [])];
   const maxMs = proj?.cue(cue).maxMs ?? proj?.category(cue).maxMs;
-  if (maxMs && m.durMs > maxMs * 1.15) out.push(`duration ${m.durMs}ms > category max ${maxMs}ms`);
+  if (maxMs && m.durMs > maxMs) out.push(`duration ${m.durMs}ms > max ${maxMs}ms (to -60 dB; shorten decays/reverb)`);
+  const target = proj?.loudness(cue);
+  if (target != null && m.lufsM < target - 1) out.push(`loudness ${m.lufsM} LUFS-M < target ${target}: the peak limiter capped it (too peaky; compress or soften the transient)`);
   if (m.clipped > 0) out.push(`${m.clipped} clipped samples`);
   if (m.startClick) out.push("starts on a non-zero sample (click)");
   if (Math.abs(m.dc) > 0.01) out.push(`DC offset ${m.dc}`);

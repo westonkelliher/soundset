@@ -135,6 +135,25 @@ function pitchMods(ctx, L, detuneParams, t0, durMs, offsets) {
   }
 }
 
+// samples often begin with silence/room noise: unless `start` is given, skip to 1 ms before the
+// first sample above -40 dB of the file's peak (on the reversed data when `reverse`)
+const autoStart = new WeakMap();
+function sampleStartMs(buf, L) {
+  if (L.start != null) return L.start;
+  const key = L.reverse ? "r" : "f";
+  const memo = autoStart.get(buf) || {};
+  if (memo[key] == null) {
+    const d = buf.getChannelData(0), n = d.length;
+    let p = 0;
+    for (let i = 0; i < n; i++) p = Math.max(p, Math.abs(d[i]));
+    let first = 0;
+    for (let i = 0; i < n; i++) { const v = Math.abs(d[L.reverse ? n - 1 - i : i]); if (v > p * 0.01) { first = i; break; } }
+    memo[key] = Math.max(0, (first / buf.sampleRate) * 1000 - 1);
+    autoStart.set(buf, memo);
+  }
+  return memo[key];
+}
+
 async function buildLayer(ctx, L, dest, rng, assets) {
   const sr = ctx.sampleRate, t0 = (L.at ?? 0) / 1000;
   const ampPts = ampPoints(L.env);
@@ -202,7 +221,7 @@ async function buildLayer(ctx, L, dest, rng, assets) {
     if (L.reverse) data.reverse();
     if (L.normalize !== false) { let p = 0; for (const v of data) p = Math.max(p, Math.abs(v)); if (p > 0) for (let i = 0; i < data.length; i++) data[i] /= p; }
     const rate = Math.pow(2, (L.pitch ?? 0) / 12);
-    const startS = (L.start ?? 0) / 1000;
+    const startS = sampleStartMs(buf, L) / 1000;
     const availMs = ((buf.duration - startS) / rate) * 1000;
     const lenMs = Math.min(L.length ?? availMs, availMs);
     if (!L.env) {
@@ -367,7 +386,7 @@ export async function renderPatch(patch, { seed = 0, sampleRate = 48000, loudnes
   const bus = p.bus || {};
   // samples need their length known up front
   const sampleDur = {};
-  for (const L of layers) if (L.type === "sample") { const b = await assets.load(L.src); sampleDur[L.src] = (b.duration * 1000 - (L.start ?? 0)) / Math.pow(2, (L.pitch ?? 0) / 12); }
+  for (const L of layers) if (L.type === "sample") { const b = await assets.load(L.src); sampleDur[L.src] = (b.duration * 1000 - sampleStartMs(b, L)) / Math.pow(2, (L.pitch ?? 0) / 12); }
   let end = Math.max(...layers.map((L) => (L.type === "sample" && !L.env ? (L.at ?? 0) + Math.min(L.length ?? Infinity, sampleDur[L.src]) : layerEndMs(L))));
   let tail = 0;
   if (bus.reverb) tail = Math.max(tail, (bus.reverb.decay ?? 1.2) * 1000 + (bus.reverb.predelay ?? 10));
